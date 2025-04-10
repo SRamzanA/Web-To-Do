@@ -1,0 +1,258 @@
+/* Основные цвета */
+/* #fff белый */
+/* #202020 Серый (фон) */
+
+
+
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    width: 100%;
+    background-color: #202020;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+nav {
+    width: 100%;
+    height: 10vh;
+    background-color: #300a70;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10%;
+    box-shadow: 0px 0.3rem 0.5rem #33334d;
+    border-bottom-right-radius: 2rem;
+}
+
+.nav__title,
+.nav__section-title {
+    color: #d7d7d7;
+    font-size: 1.2rem;
+}
+
+.search {
+    width: 15rem;
+    height: 60%;
+    background-color: #380c84;
+    border-radius: 1rem;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+}
+
+.search__input {
+    width: 80%;
+    height: 80%;
+    background-color: rgba(255, 255, 255, 0);
+    border: none;
+    color: #d7d7d7;
+    font-size: 1rem;
+}
+
+.search__input:focus {
+    outline: none;
+}
+
+.search__input::placeholder {
+    color: #d7d7d7;
+}
+
+main {
+    width: 100%;
+    display: flex;
+}
+
+.sections {
+    width: 25rem;
+    height: 80vh;
+    background-color: #300a70;
+    border-top: 0.2rem solid #303047;
+    box-shadow: 0.3rem 0.3rem 0.5rem #33334d;
+    border-top-right-radius: 3rem;
+    border-bottom-left-radius: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sections__container {
+    width: 80%;
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.sections__title {
+    color: #d7d7d7;
+    font-size: 1.5rem;
+}
+
+.sections__item-column {
+    overflow: auto;
+    width: 100%;
+    flex-grow: 1;
+}
+
+.sections__item-column::-webkit-scrollbar {
+    background-color: #380c84;
+}
+
+.sections__item-column::-webkit-scrollbar-thumb {
+    background: #202020;
+}
+
+
+.sections__add-item {
+    width: 100%;
+    height: 7rem;
+    background-color: #d7d7d7;
+    margin-top: 2rem;
+}
+
+
+
+
+
+
+
+
+
+.tasks {
+    flex-grow: 1;
+    display: grid;
+    place-items: center;
+}
+
+.tasks__container {
+    width: 80%;
+    height: 90%;
+}
+
+.tasks__add-container {
+    width: 100%;
+    height: 10vh;
+    display: flex;
+    align-items: center;
+}
+
+.tasks__input-add-task {
+    width: 90%;
+    height: 2.7rem;
+    background: none;
+    border: 0.1rem solid #300a70;
+    border-radius: 0.9rem;
+    padding: 0 2rem;
+    transition: 0.3s;
+    color: #d7d7d7;
+}
+
+.tasks__input-add-task:focus {
+    outline: none;
+    box-shadow: 0.2rem 0.2rem 0.5rem #300a70;
+}
+
+
+.tasks__btn-add-task {
+    width: 2.7rem;
+    height: 2.7rem;
+    margin: 0.5rem;
+    background-color: #380c84;
+    display: grid;
+    place-items: center;
+    border: none;
+    border-radius: 0.6rem;
+    cursor: pointer;
+}
+
+.tasks__btn-add-task > svg {
+    width: 80%;
+    height: 80%;
+    fill: #d7d7d7;
+}
+
+
+
+
+.tasks__item-container {
+    width: calc(90% + 3.2rem);
+    height: calc(65vh);
+    overflow: auto;
+}
+
+.empty-item {
+    width: 100%;
+    height: 6rem;
+    display: grid;
+    place-items: center;
+    color: #d7d7d7;
+    font-size: 1.4rem;
+}
+
+.item {
+    width: 100%;
+    height: auto;
+    min-height: 3rem;
+    background-color: #30304777;
+    display: flex;
+    justify-content: space-between;
+    border-radius: 0.7rem;
+    margin-bottom: 1rem;
+}
+
+.item__content {
+    width: 48rem;
+    text-wrap: wrap;
+    color: #d7d7d7;
+    padding: 0.7rem;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.item__buttons {
+    display: flex;
+}
+
+.item__btn-done,
+.item__btn-del {
+    width: 2rem;
+    height: 2rem;
+    margin-top: 0.5rem;
+    margin-right: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.item__btn-done > svg,
+.item__btn-del > svg {
+    width: 1.8rem;
+    height: 1.8rem;
+    fill: #d7d7d7;
+    transition: 0.3s;
+}
+
+
+
+
+
+
+
+
+
+
+/* Заглушка Container */
+.box {
+    height: 5vw;
+    background-color: #d7d7d7;
+    margin: 1vw;
+}
