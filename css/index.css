@@ -194,7 +194,7 @@ main {
     display: grid;
     place-items: center;
     color: #d7d7d7;
-    font-size: 1.4rem;
+    font-size: 1.2rem;
 }
 
 .item {
@@ -213,6 +213,7 @@ main {
     text-wrap: wrap;
     color: #d7d7d7;
     padding: 0.7rem;
+    padding-left: 1rem;
     font-size: 1rem;
     display: flex;
     align-items: center;
@@ -241,6 +242,11 @@ main {
     transition: 0.3s;
 }
 
+.tasks__done > h1 {
+    color: #d7d7d7;
+    font-size: 1.5rem;
+    margin: 2rem 0 1rem 0;
+}
 
 
 
