@@ -4,9 +4,13 @@ const tasksContainer = document.querySelector(".tasks__container")
 const taskList = document.querySelector(".tasks__to-do") // Список задач (DOM)
 const taskDoneList = document.querySelector(".tasks__done") // Список выполненных задач (DOM)
 const taskDoneCalc = document.querySelector(".tasks__done > h1")
+const sectionsItemColumn = document.querySelector(".sections__item-column")
+const sectionsInput = document.querySelector(".sections__input")
+const sectionsButton = document.querySelector(".sections__button")
 
-let tasks = [] // Массив для экземпляров класса Task
 
+
+let tasks = [] // Список для экземпляров класса Task
 
 
 
@@ -153,6 +157,54 @@ document.addEventListener("DOMContentLoaded", () => {
     })
 
     checkTasks()
+})
+
+
+
+
+
+
+
+class Section {
+    constructor (sectionName, active) {
+        this.sectionName = sectionName
+        this.id = Date.now()
+        this.tasks = []
+        this.active = active
+    }
+
+    render() {
+        let sectionHTML = `
+            <div class="sections__item" data-section-id="${this.id}">
+                ${this.sectionName}
+            </div>
+        `
+        sectionsItemColumn.insertAdjacentHTML("beforeend", sectionHTML)
+    }
+
+}
+
+class SectionManager {
+    constructor() {
+        this.sections = [] // Список для экземпляров Section
+    }
+
+    addSection(name) {
+        const newSection = new Section(name, false)
+        this.sections.push(newSection)
+        newSection.render()
+    }
+    
+}
+
+const manager = new SectionManager()
+
+sectionsButton.addEventListener("click", () => {
+    if (sectionsInput.value.trim().length !== 0) {
+        let inputText = sectionsInput.value
+        manager.addSection(inputText)
+    }
+    sectionsInput.value = ""
 })
 
 
