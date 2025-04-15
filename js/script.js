@@ -4,13 +4,129 @@ const tasksContainer = document.querySelector(".tasks__container")
 const taskList = document.querySelector(".tasks__to-do") // Список задач (DOM)
 const taskDoneList = document.querySelector(".tasks__done") // Список выполненных задач (DOM)
 const taskDoneCalc = document.querySelector(".tasks__done > h1")
+const navSectionTitle = document.querySelector(".nav__section-title > h1")
 const sectionsItemColumn = document.querySelector(".sections__item-column")
 const sectionsInput = document.querySelector(".sections__input")
 const sectionsButton = document.querySelector(".sections__button")
+const sectionItem = document.querySelector(".sections__item")
+const setActiveSectionButton = document.querySelector(".sections__del-item-button")
+
+
+class Section {
+    constructor (name, active) {
+        this.name = name
+        this.id = Date.now()
+        this.tasks = []
+        this.active = active
+    }
+
+    render() {
+        let sectionHTML = `
+            <div class="sections__item" data-section-id="${this.id}">
+                <p>${this.name}</p>
+                <div class="sections__del-item-button">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                    </svg>
+                </div>
+            </div>
+        `
+        sectionsItemColumn.insertAdjacentHTML("beforeend", sectionHTML)
+    }
+
+}
+
+class SectionManager {
+    constructor() {
+        this.sections = [] // Список для экземпляров Section (Разделов)
+    }
+
+    addSection(name) {
+        const newSection = new Section(name, false)
+        this.sections.push(newSection)
+        newSection.render()
+    }
+    
+}
+
+let manager = new SectionManager()
+
+function addDefoltSection() {
+    if (!manager.sections.find(item => item.name == "My Tasks")) {
+        manager.addSection("My Tasks")
+        manager.sections.find(item => item.name == "My Tasks").active = true
+        localStorage.setItem("manager", JSON.stringify(manager))
+    }
+}
+
+
+let activeSection = manager.sections.find(item => item.active == true)
+
+
+function addSectionToList() {
+    if (sectionsInput.value.length !== 0) {
+        let inputText = sectionsInput.value
+
+        if (!manager.sections.find(item => item.name == inputText) ) { // Если уже нет такого названия
+            if (inputText.trim().length !== 0) {
+                manager.addSection(inputText)
+                localStorage.setItem("manager", JSON.stringify(manager))
+            }
+        } else {
+            sectionsInput.placeholder = "The name repeats"
+            setTimeout(() => {
+                sectionsInput.placeholder = "Add a section"
+            }, 2000)
+        }
+    }
+    sectionsInput.value = ""
+}
+
+sectionsButton.addEventListener("click", addSectionToList)
+sectionsInput.addEventListener("keydown", (event) => {
+    if (event.key == "Enter") {
+        addSectionToList()
+    }
+})
+
+sectionsItemColumn.addEventListener("click", (event) => {
+    if (event.target.closest(".sections__del-item-button")) { // Нажатие на удалить раздел
+        wtdel = confirm("Delete it?")
+        if (wtdel == true) {
+            let item = event.target.closest(".sections__item")
+            let sectionItem = manager.sections.find(section => section.id == item.dataset.sectionId)
+            if (!sectionItem.active == true) {
+                manager.sections = manager.sections.filter(section => section.id != item.dataset.sectionId)
+                item.remove()
+            } else {
+                alert("The active partition cannot be deleted")
+            }
+        }
+
+    } else if (event.target.closest(".sections__item")) { // Нажатие на Item раздел
+        let item = event.target.closest(".sections__item")
+        manager.sections = manager.sections.map(section => {
+            section.active = false
+            return section
+        })
+        manager.sections.find(section => section.id == item.dataset.sectionId).active = true
+        sectionListUpdate()
+        taskListUpdate()
+        navSectionTitle.innerHTML = activeSection.name
+    }
+    localStorage.setItem("manager", JSON.stringify(manager))
+})
 
 
 
-let tasks = [] // Список для экземпляров класса Task
+
+
+
+
+
+
+
+
 
 
 
@@ -62,8 +178,8 @@ class Task {
 }
 
 
-
 function emptyTaskListMessage() {
+    taskList.innerHTML = ""
     const emptyItem = `
         <div class="empty-item">
             <h1>No tasks</h1>
@@ -72,33 +188,19 @@ function emptyTaskListMessage() {
 }
 
 function taskDoneCalculate() { // Счет выполненных задач и вывод
-    let calcDone = tasks.filter(item => item.completed === true)
+    let calcDone = activeSection.tasks.filter(item => item.completed === true)
     taskDoneCalc.innerHTML = `Done - ${calcDone.length}`
 }
 
 function addToDo() {
     if (textInputToAdd.value.trim().length !== 0) {
         let taskItem = new Task(textInputToAdd.value, Date.now(), false)
-        tasks.push(taskItem)
+        activeSection.tasks.push(taskItem)
         taskItem.addToTaskList() // Добавление задачи на taskList (DOM)
-        localStorage.setItem("tasks", JSON.stringify(tasks))
+        localStorage.setItem("manager", JSON.stringify(manager))
     }
     textInputToAdd.value = ""
 }
-
-function checkTasks() {
-    if (tasks.filter(item => item.completed === false).length === 0) { // Если нет выполненных
-        emptyTaskListMessage()
-    }
-
-    if (tasks.filter(item => item.completed === true).length === 0) { // Если нет невыполненных
-        taskDoneCalc.innerHTML = ""
-    } else {
-        taskDoneCalculate()
-    }
-}
-
-
 buttonAddTask.addEventListener("click", addToDo)
 textInputToAdd.addEventListener("keydown", (event) => {
     if (event.key == "Enter") {
@@ -107,32 +209,44 @@ textInputToAdd.addEventListener("keydown", (event) => {
 })
 
 
+function checkTasks() {
+    if (activeSection.tasks.filter(item => item.completed === false).length === 0) { // Если нет выполненных
+        emptyTaskListMessage()
+    }
+
+    if (activeSection.tasks.filter(item => item.completed === true).length === 0) { // Если нет невыполненных
+        taskDoneCalc.innerHTML = ""
+    } else {
+        taskDoneCalculate()
+    }
+}
+
 tasksContainer.addEventListener("click", (event) => {
     const item = event.target.closest(".item")
     if (item) {
         const itemID = item.dataset.taskId
-
+ 
         if (event.target.closest(".item__btn-del")) { // Нажатие на "удалить задачу"
-            tasks = tasks.filter(task => task.id !== parseInt(itemID))
+            activeSection.tasks = activeSection.tasks.filter(task => task.id !== parseInt(itemID))
 
             item.remove()
 
-            localStorage.setItem("tasks", JSON.stringify(tasks))
+            localStorage.setItem("manager", JSON.stringify(manager))
 
             checkTasks()
 
         } else if (event.target.closest(".item__btn-done")) { // Нажатие на кнопку "выполнить задачу"
 
-            const taskFind = tasks.find(task => task.id === parseInt(itemID))
+            const taskFind = activeSection.tasks.find(task => task.id === parseInt(itemID))
             taskFind.completed = true
             item.remove()
 
             let taskItem = new Task(taskFind.text, taskFind.id, taskFind.completed)
             taskItem.addToTaskDoneList()
 
-            localStorage.setItem("tasks", JSON.stringify(tasks))
+            localStorage.setItem("manager", JSON.stringify(manager))
 
-            if (tasks.filter(item => item.completed === false).length === 0) {
+            if (activeSection.tasks.filter(item => item.completed === false).length === 0) {
                 emptyTaskListMessage()
             }
             taskDoneCalculate()
@@ -140,14 +254,10 @@ tasksContainer.addEventListener("click", (event) => {
     }
 })
 
-
-document.addEventListener("DOMContentLoaded", () => {
-    if (localStorage.getItem("tasks")) {
-        tasks = JSON.parse(localStorage.getItem("tasks"))
-    }
-
+function taskListUpdate() {
     taskList.innerHTML = ""
-    tasks.forEach(item => { // Перебор и вывод задач из списка (Выпосленные/Невыполненные)
+    activeSection = manager.sections.find(item => item.active == true)
+    activeSection.tasks.forEach(item => { // Перебор и вывод задач из списка (Выпосленные/Невыполненные)
         let taskItem = new Task(item.text, item.id, item.completed)
         if (item.completed === false) {
             taskItem.addToTaskList()
@@ -155,57 +265,49 @@ document.addEventListener("DOMContentLoaded", () => {
             taskItem.addToTaskDoneList()
         }
     })
-
     checkTasks()
+}
+function sectionListUpdate() {
+    sectionsItemColumn.innerHTML = ""
+    manager.sections.forEach(item => {
+        item.render()
+    })
+    navSectionTitle.innerHTML = activeSection.name
+}
+
+
+document.addEventListener("DOMContentLoaded", () => {
+    if (localStorage.getItem("manager") ) {
+        const parseManager = JSON.parse(localStorage.getItem("manager"))
+        if (parseManager.sections.length !== 0) {
+            manager.sections = parseManager.sections.map(item => {
+                const section = new Section(item.name, item.active)
+                section.id = item.id
+                section.tasks = item.tasks
+                return section
+            })
+        } else {
+            addDefoltSection()
+        }
+    } else {
+        addDefoltSection()
+    }
+
+    activeSection = manager.sections.find(item => item.active == true)
+    if (!activeSection) {
+        manager.sections[0].active = true
+        activeSection = manager.sections.find(item => item.active == true)
+    }
+    console.log("Active", activeSection)
+
+    sectionListUpdate()
+    taskListUpdate()
 })
 
 
 
 
 
-
-
-class Section {
-    constructor (sectionName, active) {
-        this.sectionName = sectionName
-        this.id = Date.now()
-        this.tasks = []
-        this.active = active
-    }
-
-    render() {
-        let sectionHTML = `
-            <div class="sections__item" data-section-id="${this.id}">
-                ${this.sectionName}
-            </div>
-        `
-        sectionsItemColumn.insertAdjacentHTML("beforeend", sectionHTML)
-    }
-
-}
-
-class SectionManager {
-    constructor() {
-        this.sections = [] // Список для экземпляров Section
-    }
-
-    addSection(name) {
-        const newSection = new Section(name, false)
-        this.sections.push(newSection)
-        newSection.render()
-    }
-    
-}
-
-const manager = new SectionManager()
-
-sectionsButton.addEventListener("click", () => {
-    if (sectionsInput.value.trim().length !== 0) {
-        let inputText = sectionsInput.value
-        manager.addSection(inputText)
-    }
-    sectionsInput.value = ""
-})
 
 
 

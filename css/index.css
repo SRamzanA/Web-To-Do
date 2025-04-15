@@ -38,6 +38,17 @@ nav {
     font-size: 1.2rem;
 }
 
+.nav__section-title > h1{
+    display: block;
+    place-items: center;
+    width: 20rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    padding: 0;
+}
+
 .search {
     width: 15rem;
     height: 60%;
@@ -117,12 +128,26 @@ main {
     height: 2.7rem;
     display: flex;
     align-items: center;
+    justify-content: space-between;
     background-color: #380c84;
     color: #d7d7d7;
-    font-size: 1.1rem;
+    font-size: 1rem;
     padding-left: 1rem;
     border-radius: 0.6rem;
     margin-bottom: 1rem;
+    transition: 0.3s;
+    cursor: pointer;
+} 
+
+.sections__item > p {
+    width: 15rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sections__item:hover {
+    background-color: #4e17ad;
 }
 
 
@@ -268,6 +293,7 @@ main {
     display: flex;
 }
 
+.sections__del-item-button,
 .item__btn-done,
 .item__btn-del {
     width: 2rem;
@@ -279,6 +305,7 @@ main {
     cursor: pointer;
 }
 
+.sections__del-item-button > svg,
 .item__btn-done > svg,
 .item__btn-del > svg {
     width: 1.8rem;
@@ -293,7 +320,9 @@ main {
     margin: 2rem 0 1rem 0;
 }
 
-
+.sections__del-item-button:hover > svg{
+    fill: #8c8c8c;
+}
 
 
 
