@@ -12,8 +12,9 @@ const sectionItem = document.querySelector(".sections__item")
 const setActiveSectionButton = document.querySelector(".sections__del-item-button")
 
 
+
 class Section {
-    constructor (name, active) {
+    constructor(name, active) {
         this.name = name
         this.id = Date.now()
         this.tasks = []
@@ -46,39 +47,36 @@ class SectionManager {
         this.sections.push(newSection)
         newSection.render()
     }
-    
+
 }
 
 let manager = new SectionManager()
 
 function addDefoltSection() {
-    if (!manager.sections.find(item => item.name == "My Tasks")) {
+    if (!manager.sections.find(item => item.name == "My Tasks")) { // Если нету раздела "My Tasks"
         manager.addSection("My Tasks")
         manager.sections.find(item => item.name == "My Tasks").active = true
         localStorage.setItem("manager", JSON.stringify(manager))
     }
 }
 
-
 let activeSection = manager.sections.find(item => item.active == true)
 
-
 function addSectionToList() {
-    if (sectionsInput.value.length !== 0) {
+    if (sectionsInput.value.trim().length !== 0) {
         let inputText = sectionsInput.value
 
-        if (!manager.sections.find(item => item.name == inputText) ) { // Если уже нет такого названия
-            if (inputText.trim().length !== 0) {
-                manager.addSection(inputText)
-                localStorage.setItem("manager", JSON.stringify(manager))
-            }
-        } else {
-            sectionsInput.placeholder = "The name repeats"
-            setTimeout(() => {
-                sectionsInput.placeholder = "Add a section"
-            }, 2000)
+        if (!manager.sections.find(item => item.name == inputText)) { // Если уже нет такого названия
+            manager.addSection(inputText)
+            localStorage.setItem("manager", JSON.stringify(manager))
         }
+    } else {
+        sectionsInput.placeholder = "The name repeats"
+        setTimeout(() => {
+            sectionsInput.placeholder = "Add a section"
+        }, 2000)
     }
+
     sectionsInput.value = ""
 }
 
@@ -91,7 +89,7 @@ sectionsInput.addEventListener("keydown", (event) => {
 
 sectionsItemColumn.addEventListener("click", (event) => {
     if (event.target.closest(".sections__del-item-button")) { // Нажатие на удалить раздел
-        wtdel = confirm("Delete it?")
+        let wtdel = confirm("Delete it?")
         if (wtdel == true) {
             let item = event.target.closest(".sections__item")
             let sectionItem = manager.sections.find(section => section.id == item.dataset.sectionId)
@@ -116,15 +114,6 @@ sectionsItemColumn.addEventListener("click", (event) => {
     }
     localStorage.setItem("manager", JSON.stringify(manager))
 })
-
-
-
-
-
-
-
-
-
 
 
 
@@ -196,7 +185,7 @@ function addToDo() {
     if (textInputToAdd.value.trim().length !== 0) {
         let taskItem = new Task(textInputToAdd.value, Date.now(), false)
         activeSection.tasks.push(taskItem)
-        taskItem.addToTaskList() // Добавление задачи на taskList (DOM)
+        taskItem.addToTaskList() // Добавление задачи на страницу
         localStorage.setItem("manager", JSON.stringify(manager))
     }
     textInputToAdd.value = ""
@@ -210,11 +199,11 @@ textInputToAdd.addEventListener("keydown", (event) => {
 
 
 function checkTasks() {
-    if (activeSection.tasks.filter(item => item.completed === false).length === 0) { // Если нет выполненных
+    if (activeSection.tasks.filter(item => item.completed === false).length === 0) { // Если нет невыполненных
         emptyTaskListMessage()
     }
 
-    if (activeSection.tasks.filter(item => item.completed === true).length === 0) { // Если нет невыполненных
+    if (activeSection.tasks.filter(item => item.completed === true).length === 0) { // Если нет выполненных
         taskDoneCalc.innerHTML = ""
     } else {
         taskDoneCalculate()
@@ -225,7 +214,7 @@ tasksContainer.addEventListener("click", (event) => {
     const item = event.target.closest(".item")
     if (item) {
         const itemID = item.dataset.taskId
- 
+
         if (event.target.closest(".item__btn-del")) { // Нажатие на "удалить задачу"
             activeSection.tasks = activeSection.tasks.filter(task => task.id !== parseInt(itemID))
 
@@ -277,9 +266,9 @@ function sectionListUpdate() {
 
 
 document.addEventListener("DOMContentLoaded", () => {
-    if (localStorage.getItem("manager") ) {
+    if (localStorage.getItem("manager")) {
         const parseManager = JSON.parse(localStorage.getItem("manager"))
-        if (parseManager.sections.length !== 0) {
+        if (parseManager.sections.length !== 0) { // если разделов > 0
             manager.sections = parseManager.sections.map(item => {
                 const section = new Section(item.name, item.active)
                 section.id = item.id
@@ -294,7 +283,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     activeSection = manager.sections.find(item => item.active == true)
-    if (!activeSection) {
+    if (!activeSection) { // Если нет активного раздела
         manager.sections[0].active = true
         activeSection = manager.sections.find(item => item.active == true)
     }
