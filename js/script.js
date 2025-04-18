@@ -3,7 +3,8 @@ const buttonAddTask = document.querySelector(".tasks__btn-add-task")
 const tasksContainer = document.querySelector(".tasks__container")
 const taskList = document.querySelector(".tasks__to-do") // Список задач (DOM)
 const taskDoneList = document.querySelector(".tasks__done") // Список выполненных задач (DOM)
-const taskDoneCalc = document.querySelector(".tasks__done > h1")
+let taskDoneCalc = document.querySelector(".tasks__done > h1")
+
 const navSectionTitle = document.querySelector(".nav__section-title > h1")
 const sectionsItemColumn = document.querySelector(".sections__item-column")
 const sectionsInput = document.querySelector(".sections__input")
@@ -11,6 +12,8 @@ const sectionsButton = document.querySelector(".sections__button")
 const sectionItem = document.querySelector(".sections__item")
 const setActiveSectionButton = document.querySelector(".sections__del-item-button")
 
+const searchButton = document.querySelector(".search__button")
+const searchInput = document.querySelector(".search__input")
 
 
 class Section {
@@ -216,7 +219,9 @@ tasksContainer.addEventListener("click", (event) => {
         const itemID = item.dataset.taskId
 
         if (event.target.closest(".item__btn-del")) { // Нажатие на "удалить задачу"
-            activeSection.tasks = activeSection.tasks.filter(task => task.id !== parseInt(itemID))
+            manager.sections.map(section => { // Проход по всему списку
+                section.tasks = section.tasks.filter(task => task.id !== parseInt(itemID))
+            })
 
             item.remove()
 
@@ -226,7 +231,15 @@ tasksContainer.addEventListener("click", (event) => {
 
         } else if (event.target.closest(".item__btn-done")) { // Нажатие на кнопку "выполнить задачу"
 
-            const taskFind = activeSection.tasks.find(task => task.id === parseInt(itemID))
+            // tasks.find(task => task.id === parseInt(itemID))
+            let taskFind = null
+            for (let i = 0; i < manager.sections.length; i++) {
+                taskFind = manager.sections[i].tasks.find(task => task.id === parseInt(itemID))
+                if (taskFind) {
+                    break
+                }
+            }
+            
             taskFind.completed = true
             item.remove()
 
@@ -243,8 +256,66 @@ tasksContainer.addEventListener("click", (event) => {
     }
 })
 
+
+
+
+
+function searchFunction(searchText) {
+    let allTaskArray = []
+    manager.sections.map(section => { // Находим задачи всех разделов
+        section.tasks.map(task => {
+            allTaskArray.push(task)
+        })
+    })
+
+    let seachArray = allTaskArray.filter(task => {
+        return task.text.toLowerCase().includes(searchText.toLowerCase())
+    })
+    
+    console.log("Проверено объектов", allTaskArray)
+    console.log("Найдено объектов", seachArray)
+
+    taskList.innerHTML = ""
+    if (seachArray.filter(task => task.completed === true).length !== 0) {
+        taskDoneList.innerHTML = `<h1>Done - ${seachArray.filter(task => task.completed === true).length}</h1>`
+    } else {
+        taskDoneList.innerHTML = `<h1></h1>`
+    }
+
+    if (seachArray.length !== 0) {
+        seachArray.forEach(task => {
+            let newTask = new Task(task.text, task.id, task.completed)
+            if (newTask.completed == false) {
+                newTask.addToTaskList()
+            } else if (newTask.completed == true) {
+                newTask.addToTaskDoneList()
+            }
+        })
+    } else {
+        emptyTaskListMessage()
+    }
+    navSectionTitle.innerHTML = "Found tasks"
+}
+
+function startSearchFunction() {
+    if (searchInput.value.trim().length !== 0) {
+        searchFunction(searchInput.value)
+    }
+}
+searchInput.addEventListener("keydown", (event) => {
+    if (event.key == "Enter") {
+        startSearchFunction()
+    }
+})
+searchButton.addEventListener("click", startSearchFunction)
+
+
+
+
 function taskListUpdate() {
     taskList.innerHTML = ""
+    taskDoneList.innerHTML = "<h1></h1>"
+    taskDoneCalc = document.querySelector(".tasks__done > h1")
     activeSection = manager.sections.find(item => item.active == true)
     activeSection.tasks.forEach(item => { // Перебор и вывод задач из списка (Выпосленные/Невыполненные)
         let taskItem = new Task(item.text, item.id, item.completed)
@@ -263,7 +334,6 @@ function sectionListUpdate() {
     })
     navSectionTitle.innerHTML = activeSection.name
 }
-
 
 document.addEventListener("DOMContentLoaded", () => {
     if (localStorage.getItem("manager")) {
@@ -292,12 +362,3 @@ document.addEventListener("DOMContentLoaded", () => {
     sectionListUpdate()
     taskListUpdate()
 })
-
-
-
-
-
-
-
-
-
