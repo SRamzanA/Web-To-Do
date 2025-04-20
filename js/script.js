@@ -72,13 +72,13 @@ function addSectionToList() {
         if (!manager.sections.find(item => item.name == inputText)) { // Если уже нет такого названия
             manager.addSection(inputText)
             localStorage.setItem("manager", JSON.stringify(manager))
+        } else {
+            sectionsInput.placeholder = "The name repeats"
+            setTimeout(() => {
+                sectionsInput.placeholder = "Add a section"
+            }, 2000)
         }
-    } else {
-        sectionsInput.placeholder = "The name repeats"
-        setTimeout(() => {
-            sectionsInput.placeholder = "Add a section"
-        }, 2000)
-    }
+    } 
 
     sectionsInput.value = ""
 }
@@ -192,6 +192,8 @@ function addToDo() {
         localStorage.setItem("manager", JSON.stringify(manager))
     }
     textInputToAdd.value = ""
+    sectionListUpdate()
+    taskListUpdate()
 }
 buttonAddTask.addEventListener("click", addToDo)
 textInputToAdd.addEventListener("keydown", (event) => {
@@ -277,7 +279,8 @@ function searchFunction(searchText) {
 
     taskList.innerHTML = ""
     if (seachArray.filter(task => task.completed === true).length !== 0) {
-        taskDoneList.innerHTML = `<h1>Done - ${seachArray.filter(task => task.completed === true).length}</h1>`
+        // taskDoneList.innerHTML = `<h1>Done - ${seachArray.filter(task => task.completed === true).length}</h1>`
+        taskDoneList.innerHTML = `<h1>Done ----</h1>`
     } else {
         taskDoneList.innerHTML = `<h1></h1>`
     }
