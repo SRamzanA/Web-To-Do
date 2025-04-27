@@ -37,7 +37,6 @@ class Section {
         `
         sectionsItemColumn.insertAdjacentHTML("beforeend", sectionHTML)
     }
-
 }
 
 class SectionManager {
@@ -56,9 +55,9 @@ class SectionManager {
 let manager = new SectionManager()
 
 function addDefoltSection() {
-    if (!manager.sections.find(item => item.name == "My Tasks")) { // Если нету раздела "My Tasks"
-        manager.addSection("My Tasks")
-        manager.sections.find(item => item.name == "My Tasks").active = true
+    if (!manager.sections.find(item => item.name == "Мои задачи")) { // Если нету раздела "Мои задачи"
+        manager.addSection("Мои задачи")
+        manager.sections.find(item => item.name == "Мои задачи").active = true
         localStorage.setItem("manager", JSON.stringify(manager))
     }
 }
@@ -73,9 +72,9 @@ function addSectionToList() {
             manager.addSection(inputText)
             localStorage.setItem("manager", JSON.stringify(manager))
         } else {
-            sectionsInput.placeholder = "The name repeats"
+            sectionsInput.placeholder = "Имя повторяется"
             setTimeout(() => {
-                sectionsInput.placeholder = "Add a section"
+                sectionsInput.placeholder = "Добавить раздел"
             }, 2000)
         }
     } 
@@ -92,7 +91,7 @@ sectionsInput.addEventListener("keydown", (event) => {
 
 sectionsItemColumn.addEventListener("click", (event) => {
     if (event.target.closest(".sections__del-item-button")) { // Нажатие на удалить раздел
-        let wtdel = confirm("Delete it?")
+        let wtdel = confirm("Уверены, что хотите удалить раздел?")
         if (wtdel == true) {
             let item = event.target.closest(".sections__item")
             let sectionItem = manager.sections.find(section => section.id == item.dataset.sectionId)
@@ -100,7 +99,7 @@ sectionsItemColumn.addEventListener("click", (event) => {
                 manager.sections = manager.sections.filter(section => section.id != item.dataset.sectionId)
                 item.remove()
             } else {
-                alert("The active partition cannot be deleted")
+                alert("Активный раздел нельзя удалить!")
             }
         }
 
@@ -117,7 +116,6 @@ sectionsItemColumn.addEventListener("click", (event) => {
     }
     localStorage.setItem("manager", JSON.stringify(manager))
 })
-
 
 
 
@@ -174,14 +172,14 @@ function emptyTaskListMessage() {
     taskList.innerHTML = ""
     const emptyItem = `
         <div class="empty-item">
-            <h1>No tasks</h1>
+            <h1>Нет задач</h1>
         </div>`
     taskList.insertAdjacentHTML("beforeend", emptyItem)
 }
 
 function taskDoneCalculate() { // Счет выполненных задач и вывод
     let calcDone = activeSection.tasks.filter(item => item.completed === true)
-    taskDoneCalc.innerHTML = `Done - ${calcDone.length}`
+    taskDoneCalc.innerHTML = `Выполнено - ${calcDone.length}`
 }
 
 function addToDo() {
@@ -280,7 +278,7 @@ function searchFunction(searchText) {
     taskList.innerHTML = ""
     if (seachArray.filter(task => task.completed === true).length !== 0) {
         // taskDoneList.innerHTML = `<h1>Done - ${seachArray.filter(task => task.completed === true).length}</h1>`
-        taskDoneList.innerHTML = `<h1>Done ----</h1>`
+        taskDoneList.innerHTML = `<h1>Выполнено ----</h1>`
     } else {
         taskDoneList.innerHTML = `<h1></h1>`
     }
@@ -297,7 +295,7 @@ function searchFunction(searchText) {
     } else {
         emptyTaskListMessage()
     }
-    navSectionTitle.innerHTML = "Found tasks"
+    navSectionTitle.innerHTML = "Найденные"
 }
 
 function startSearchFunction() {

@@ -228,15 +228,3 @@ main {
     fill: #8c8c8c;
 }
 
-
-
-
-
-
-
-/* Заглушка Container */
-.box {
-    height: 5vw;
-    background-color: #d7d7d7;
-    margin-bottom: 1vw;
-}
